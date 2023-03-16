@@ -1,4 +1,4 @@
 # SocketChat
 Version 2020.10
 
-![alt text](https://github.com/AxmedStark/SocketChat/edit/main/image.png?raw=true)
+![alt text](https://github.com/AxmedStark/SocketChat/blob/main/image.png?raw=true)
