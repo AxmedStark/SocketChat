@@ -1,0 +1,119 @@
+﻿<Window x:Class="SocketChat.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:SocketChat"
+        Background="DimGray" 
+        mc:Ignorable="d" FontSize="14" Name="wMain" Icon="{Binding WindowIcon}"
+        Title="{Binding WindowTitle}" Height="385.665" Width="526.886"
+        
+     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="13" 
+        TextElement.Foreground="White"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto">
+
+    <Window.DataContext> 
+        <local:ClientSelector/>
+    </Window.DataContext> 
+
+    <Window.Resources>
+        <ResourceDictionary Source="ResourceDictionary.xaml"/>
+    </Window.Resources>
+    <DockPanel Background="DimGray" Margin="0 10 0 0">
+
+        <StatusBar Background="DimGray" Name="sbMain" DockPanel.Dock="Bottom">
+            <StatusBarItem Background="DimGray" >
+                <TextBlock FontWeight="ExtraBold" Background="{Binding Path=IsActive,Converter={StaticResource BooleanToBrushConverter}}">
+
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource BooleanToConnectionStatusConverter}">
+                            <Binding Path="IsServer"/>
+                            <Binding Path="IsActive"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StatusBarItem> 
+            <Separator Background="DimGray"/>
+            <StatusBarItem Background="DimGray">
+                <StackPanel Background="DimGray" Orientation="Horizontal">
+                    <TextBlock Foreground="White" Background="DimGray" Text="Active users: " Width="auto"/>
+                    <TextBlock Foreground="White" Background="DimGray" Text="{Binding Path=ActiveClients}" Width="auto"/>
+                </StackPanel>
+            </StatusBarItem> 
+        </StatusBar>
+
+        <DockPanel Background="DimGray" IsEnabled="{Binding Path=IsActive}" DockPanel.Dock="Right">
+            <TextBlock Foreground="White" Background="DimGray" DockPanel.Dock="Top" Text="Active Clients" TextAlignment="Center"/>
+            <ListBox Foreground="White" Background="DimGray" BorderBrush="White" Name="lbActiveClients" ItemsSource="{Binding Path=ClientList}" DisplayMemberPath="Username" SelectedItem ="{Binding SelectedUsername}"/>
+        </DockPanel>
+
+        <Grid Background="DimGray" Name="gControl" DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+ 
+            <TextBlock Background="DimGray" Grid.Column="0" Grid.Row="0" Text="IP Address:"/>
+            <TextBox Foreground="White" Background="DimGray" Grid.Column="1" Grid.Row="0" Text="{Binding Path=IpAddress, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}" 
+                     IsEnabled="{Binding Path=IsActive, Converter={StaticResource BooleanToInverseConverter}}"/>
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="0" Value="{Binding Path=Port, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}" 
+                                Width="70" IsEnabled="{Binding Path=IsActive, Converter={StaticResource BooleanToInverseConverter}}"/>
+
+            <TextBlock Background="DimGray" Grid.Column="0" Grid.Row="1" Text="Username:"/>
+            <TextBox Foreground="White" Background="DimGray" Grid.Column="1" Grid.Row="1" Text="{Binding Path=SourceUsername, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding Path=IsActive, Converter={StaticResource BooleanToInverseConverter}}"/>
+
+            <ToggleButton Foreground="White" Grid.Column="2" Grid.Row="1" Style="{StaticResource ToggleButtonStyle1}" Content="Server" IsChecked="{Binding IsServer}"
+                          IsEnabled="{Binding Path=IsActive, Converter={StaticResource BooleanToInverseConverter}}"/>
+
+            <Button Foreground="White" Background="DimGray" BorderBrush="White" Name="bSwitchServerState" Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Command="{Binding StartConnectionCMD}">
+                <Button.Content>
+                    <MultiBinding Converter="{StaticResource BooleanToStartStopConverter}">
+                        <Binding Path="IsServer"/>
+                        <Binding Path="IsActive"/>
+                    </MultiBinding>
+                </Button.Content>
+            </Button>
+        </Grid>
+
+        <DockPanel Background="DimGray" IsEnabled="{Binding Path=IsActive}">
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Background="DimGray" Grid.Column="0" Grid.Row="0" Text="Target Username:"/>
+                <TextBox Foreground="White" Background="DimGray" Name="tbTargetUsername" Grid.Column="1" Grid.Row="0" Text="{Binding TargetUsername}"/>
+
+                <TextBlock Background="DimGray" Grid.Column="0" Grid.Row="1" Text="Message:"/>
+                <TextBox Foreground="White"  Background="DimGray" Name="tbMessage" Grid.Column="1" Grid.Row="1" Text="{Binding MessageContent}"/>
+
+                <Button Foreground="White" Background="DimGray" BorderBrush="White" Name="bSend" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Content="Send" 
+                        Command="{Binding SendMessageCMD}">
+                        
+
+                </Button>  
+ 
+
+            </Grid>  
+            <ListBox Name="lstChatHistory" ItemsSource="{Binding Path=ChatList}" BorderBrush="DimGray"/>
+        </DockPanel>
+    </DockPanel>
+</Window>
+ 
